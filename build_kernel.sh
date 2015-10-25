@@ -20,6 +20,7 @@ CLEANUP()
 	rm -rf "$KERNELDIR"/READY/*.img
 	rm -rf "$KERNELDIR"/READY/*.zip
 	rm -rf "$KERNELDIR"/READY/*.sh
+	rm -f "$KERNELDIR"/.config
 	#### Cleanup bootimg_tools now #####
 	echo "Cleaning bootimg_tools from unneeded data..."
 	sleep 1;
@@ -68,6 +69,12 @@ CLEANUP()
 BUILD_NOW()
 {
 	if [ ! -f "$KERNELDIR"/.config ]; then
+		echo "Copying arch/arm/configs/$DEFCONFIG to .config"
+		cp arch/arm/configs/"$DEFCONFIG" .config
+	else
+		rm -f "$KERNELDIR"/.config
+		echo "Copying arch/arm/configs/$DEFCONFIG to .config"
+		sleep 1;
 		cp arch/arm/configs/"$DEFCONFIG" .config
 	fi;
 
@@ -87,8 +94,6 @@ BUILD_NOW()
 
 	# build zImage
 	time make ARCH=arm CROSS_COMPILE=android-toolchain/bin/arm-eabi- zImage-dtb -j ${NR_CPUS}
-
-	cp "$KERNELDIR"/.config "$KERNELDIR"/arch/arm/configs/"$KERNEL_CONFIG_FILE";
 
 	stat "$KERNELDIR"/arch/arm/boot/zImage || exit 1;
 
@@ -127,23 +132,10 @@ BUILD_NOW()
 
 CLEAN_KERNEL()
 {
-	echo "Backing up config"
-	sleep 1;
-	if [ -e .config ]; then
-		cp -pv .config .config.bkp;
-	elif [ -e .config.bkp ]; then
-		rm .config.bkp
-	fi;
-
 	echo "Mrproper and distclean running"
 	sleep 1;
 	make ARCH=arm mrproper;
 	make distclean;
-
-	echo "Restore config"
-	if [ -e .config.bkp ]; then
-		cp -pv .config.bkp .config;
-	fi;
 }
 
 echo "Initializing auto-build script......."

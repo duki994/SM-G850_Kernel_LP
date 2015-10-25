@@ -20,6 +20,7 @@ CLEANUP()
 	rm -rf "$KERNELDIR"/READY/*.img
 	rm -rf "$KERNELDIR"/READY/*.zip
 	rm -rf "$KERNELDIR"/READY/*.sh
+	rm -f "$KERNELDIR"/.config
 	#### Cleanup bootimg_tools now #####
 	echo "Cleaning bootimg_tools from unneeded data..."
 	sleep 1;
@@ -67,22 +68,10 @@ CLEANUP;
 
 CLEAN_KERNEL()
 {
-	echo "Backing up config"
-	sleep 1;
-	if [ -e .config ]; then
-		cp -pv .config .config.bkp;
-	elif [ -e .config.bkp ]; then
-		rm .config.bkp
-	fi;
-
 	echo "Mrproper and distclean running"
 	sleep 1;
 	make ARCH=arm mrproper;
 	make distclean;
 
-	echo "Restore config"
-	if [ -e .config.bkp ]; then
-		cp -pv .config.bkp .config;
-	fi;
 }
 CLEAN_KERNEL;
