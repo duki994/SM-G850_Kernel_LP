@@ -48,9 +48,11 @@ CLEANUP()
 		rm -rf ../"$RAMDISK_TMP"/*
 	fi;
 
-	echo "Make RELEASE directory if it doesn't exist"
+	echo "Make RELEASE directory if it doesn't exist and clean it if it exists"
 	if [ ! -d ../RELEASE ]; then
 		mkdir ../RELEASE
+	else
+		rm -rf ../RELEASE/*
 	fi;
 
 
