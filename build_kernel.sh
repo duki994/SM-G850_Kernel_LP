@@ -23,23 +23,29 @@ CLEANUP()
 	#### Cleanup bootimg_tools now #####
 	echo "Cleaning bootimg_tools from unneeded data..."
 	sleep 1;
+	echo "Deleting kernel zImage named 'kernel' in bootimg_tools dir....."
+	rm -f "$KERNELDIR"/bootimg_tools/boot_slte/kernel
+	sleep 1;
+	echo "Deleting all files from ramdisk dir in bootimg_tools if it exists"
 	if [ ! -d "$KERNELDIR"/bootimg_tools/boot_slte/ramdisk ]; then
 		mkdir -p "$KERNELDIR"/bootimg_tools/boot_slte/ramdisk 
 		chmod 777 "$KERNELDIR"/bootimg_tools/boot_slte/ramdisk
 	else
 		rm -rf "$KERNELDIR"/bootimg_tools/boot_slte/ramdisk/*
 	fi;
-	rm -f "$KERNELDIR"/bootimg_tools/boot_slte/kernel
+	sleep 1;
+	echo "Deleted all files from ramdisk dir in bootimg_tools";
 
 	
 	mkdir -p "$KERNELDIR"/READY/
-
-	if [ -d ../"$RAMDISK_TMP" ]; then
-		rm -rf ../"$RAMDISK_TMP"/*
-	else
+	
+	echo "Clean all files from temporary"
+	if [ ! -d ../"$RAMDISK_TMP" ]; then
 		mkdir ../"$RAMDISK_TMP"
 		chown root:root ../"$RAMDISK_TMP"
 		chmod 777 ../"$RAMDISK_TMP"
+	else
+		rm -rf ../"$RAMDISK_TMP"/*
 	fi;
 
 
@@ -50,7 +56,6 @@ CLEANUP()
 	rm -f arch/arm/boot/Image
 
 }
-CLEANUP;
 
 
 BUILD_NOW()
@@ -115,14 +120,20 @@ BUILD_NOW()
 
 CLEAN_KERNEL()
 {
-
+	echo "Backing up config"
+	sleep 1;
 	if [ -e .config ]; then
 		cp -pv .config .config.bkp;
 	elif [ -e .config.bkp ]; then
 		rm .config.bkp
 	fi;
+
+	echo "Mrproper and distclean running"
+	sleep 1;
 	make ARCH=arm mrproper;
 	make distclean;
+
+	echo "Restore config"
 	if [ -e .config.bkp ]; then
 		cp -pv .config.bkp .config;
 	fi;
@@ -131,7 +142,7 @@ CLEAN_KERNEL()
 echo "Initializing auto-build script......."
 sleep 1;
 CLEANUP;
-CLEAN_KERNEL;
 echo "Build now starting"
 BUILD_NOW;
+CLEAN_KERNEL;
 exit;
