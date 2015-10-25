@@ -48,6 +48,11 @@ CLEANUP()
 		rm -rf ../"$RAMDISK_TMP"/*
 	fi;
 
+	echo "Make RELEASE directory if it doesn't exist"
+	if [ ! -d ../RELEASE ]; then
+		mkdir ../RELEASE
+	fi;
+
 
 	# force regeneration of .dtb and zImage files for every compile
 	rm -f arch/arm/boot/*.dtb
@@ -141,8 +146,8 @@ CLEAN_KERNEL()
 
 echo "Initializing auto-build script......."
 sleep 1;
+CLEAN_KERNEL;
 CLEANUP;
 echo "Build now starting"
 BUILD_NOW;
-CLEAN_KERNEL;
 exit;

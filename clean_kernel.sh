@@ -48,6 +48,11 @@ CLEANUP()
 		rm -rf ../"$RAMDISK_TMP"/*
 	fi;
 
+	echo "Make RELEASE directory if it doesn't exist"
+	if [ ! -d ../RELEASE ]; then
+		mkdir ../RELEASE
+	fi;
+
 
 	# force regeneration of .dtb and zImage files for every compile
 	rm -f arch/arm/boot/*.dtb
