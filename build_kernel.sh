@@ -132,10 +132,16 @@ BUILD_NOW()
 
 CLEAN_KERNEL()
 {
-	echo "Mrproper and distclean running"
+	echo "Mrproper and clean running"
 	sleep 1;
 	make ARCH=arm mrproper;
-	make distclean;
+	make clean;
+
+	# clean ccache
+	read -t 10 -p "clean ccache, 10sec timeout (y/n)?";
+	if [ "$REPLY" == "y" ]; then
+		ccache -C;
+	fi;
 }
 
 echo "Initializing auto-build script......."
