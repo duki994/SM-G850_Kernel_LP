@@ -15,6 +15,7 @@ delete("/system/app/ContainerEventsRelayManager.apk", "/system/app/ContainerEven
 delete("/system/app/ContainerAgent.apk", "/system/app/ContainerAgent.odex");
 delete_recursive("/system/container");
 delete_recursive("/system/etc/secure_storage/com.sec.knox.seandroid");
+delete_recursive("/system/app/SecurityLogAgent");
 delete("/system/priv-app/KLMSAgent.apk", "/system/priv-app/KLMSAgent.odex");
 delete("/system/priv-app/SPDClient.apk", "/system/priv-app/SPDClient.odex");
 delete("/system/tima_measurement_info");
