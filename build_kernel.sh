@@ -3,11 +3,34 @@ clear
 
 LANG=C
 
-# location
+###### PREREQUISITES #######
+
+# What you need installed to compile
+# gcc, gpp, cpp, c++, g++, lzma, lzop, ia32-libs flex
+# If on 64bit Linux, install gcc multilib
+
+### info on how to start this autobuild ###
+# Project structure
+# --project_root/ #### can have any name
+# -----ramdisk_source/ ## defined by RAMDISK_TMP var
+# -----ramdisk_tmp/ ## defined by RAMDISK_DIR var
+# -----kernel_source/ #### can have any name
+# -----RELEASE/
+
+## TOOLCHAIN INFO ##
+# Toolchain is already into kernel dir. You just need to have
+# correct folder structure and run this script. Everything will be auto-built
+
+## FLASHABLE ZIP ##
+# Flashable zip will be located in project_root/RELEASE directory
+# and will have name Kernel-slte.zip
+
+# location defines
 KERNELDIR=$(readlink -f .);
 RAMDISK_TMP=ramdisk_tmp
 RAMDISK_DIR=ramdisk_source
 DEFCONFIG=exynos5430-base_defconfig
+
 
 CLEANUP()
 {
@@ -36,11 +59,8 @@ CLEANUP()
 	fi;
 	sleep 1;
 	echo "Deleted all files from ramdisk dir in bootimg_tools";
-
 	
-	mkdir -p "$KERNELDIR"/READY/
-	
-	echo "Clean all files from temporary"
+	echo "Clean all files from temporary and make ramdisk_tmp if it doesn´t exist"
 	if [ ! -d ../"$RAMDISK_TMP" ]; then
 		mkdir ../"$RAMDISK_TMP"
 		chown root:root ../"$RAMDISK_TMP"
@@ -58,7 +78,6 @@ CLEANUP()
 
 
 	# force regeneration of .dtb and zImage files for every compile
-	rm -f arch/arm/boot/*.dtb
 	rm -f arch/arm/boot/*.cmd
 	rm -f arch/arm/boot/zImage
 	rm -f arch/arm/boot/Image
