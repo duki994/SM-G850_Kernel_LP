@@ -2413,6 +2413,12 @@ config KERNEL_MODE_NEON
 	help
 	  Say Y to include support for NEON in kernel mode.
 
+config KERNEL_MODE_NEON
+	bool "Support for NEON in kernel mode"
+	depends on NEON && AEABI
+	help
+	  Say Y to include support for NEON in kernel mode.
+
 endmenu
 
 menu "Userspace binary formats"
