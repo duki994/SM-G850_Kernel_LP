@@ -136,7 +136,6 @@ enum sound_control {
 #define ME(s)	s, s##VOL
 	ME(EQ1MIX1), ME(EQ1MIX2), ME(EQ2MIX1), ME(EQ2MIX2), ME(EQ3MIX1), ME(EQ4MIX1),
 	ME(HPOUT1L1), ME(HPOUT1L2), ME(HPOUT1R1), ME(HPOUT1R2),
-	ME(AIF4TX1), ME(AIF4TX2),
 	
 	EQAFREQS, EQBFREQS,
 	EQHPL1G, EQHPL2G, EQHPL3G, EQHPL4G, EQHPL5G, EQHPL6G, EQHPL7G, EQHPL8G,
@@ -209,9 +208,6 @@ static struct arizona_control ctls[] = {
 	
 	MIXER("out1r", OUT1RMIX, 1),
 	MIXER("out1r", OUT1RMIX, 2),
-	
-	MIXER("aif4tx1", AIF4TX1MIX, 1),
-	MIXER("aif4tx2", AIF4TX1MIX, 1),
 
 	/* EQ Configurables */
 
