@@ -20,3 +20,5 @@
 void arizona_control_init(struct snd_soc_codec *pcodec);
 void arizona_control_regmap_hook(struct regmap *pmap, unsigned int reg,
 		      		unsigned int *val);
+
+
