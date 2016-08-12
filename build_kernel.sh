@@ -46,10 +46,8 @@ CLEANUP()
 	rm -f "$KERNELDIR"/.config
 	#### Cleanup bootimg_tools now #####
 	echo "Cleaning bootimg_tools from unneeded data..."
-	sleep 1;
 	echo "Deleting kernel zImage named 'kernel' in bootimg_tools dir....."
 	rm -f "$KERNELDIR"/bootimg_tools/boot_slte/kernel
-	sleep 1;
 	echo "Deleting all files from ramdisk dir in bootimg_tools if it exists"
 	if [ ! -d "$KERNELDIR"/bootimg_tools/boot_slte/ramdisk ]; then
 		mkdir -p "$KERNELDIR"/bootimg_tools/boot_slte/ramdisk 
@@ -57,7 +55,6 @@ CLEANUP()
 	else
 		rm -rf "$KERNELDIR"/bootimg_tools/boot_slte/ramdisk/*
 	fi;
-	sleep 1;
 	echo "Deleted all files from ramdisk dir in bootimg_tools";
 	
 	echo "Clean all files from temporary and make ramdisk_tmp if it doesn´t exist"
@@ -93,7 +90,6 @@ BUILD_NOW()
 	else
 		rm -f "$KERNELDIR"/.config
 		echo "Copying arch/arm/configs/$DEFCONFIG to .config"
-		sleep 1;
 		cp arch/arm/configs/"$DEFCONFIG" .config
 	fi;
 
@@ -142,6 +138,16 @@ BUILD_NOW()
 		cd ../READY
 		zip -r Kernel-slte.zip * >/dev/null
 		mv Kernel-slte.zip ../../RELEASE/
+
+
+		# Add proper timestamps to default.prop in ramdisk
+
+		DATE=$(date)
+		DATEUTC=$(date +%s)
+
+		sed -i "s/ro.bootimage.build.date=.*/ro.bootimage.build.date=${DATE}/g" ../../"$RAMDISK_DIR"/default.prop
+		sed -i "s/ro.bootimage.build.date.utc=.*/ro.bootimage.build.date.utc=${DATEUTC}/g" ../../"$RAMDISK_DIR"/default.prop
+
 	else
 		# with red-color
 		echo -e "\e[1;31mKernel STUCK in BUILD! no zImage exist\e[m"

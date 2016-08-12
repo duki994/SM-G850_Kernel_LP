@@ -242,8 +242,8 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 
 HOSTCC       = ccache gcc
 HOSTCXX      = ccache g++
-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89 -fgcse-las
-HOSTCXXFLAGS = -O2 -std=gnu89 -fgcse-las
+HOSTCFLAGS   = -Wmissing-prototypes -DNDEBUG -Wstrict-prototypes -O3 -fomit-frame-pointer -fgcse-las -fgraphite -floop-flatten -floop-parallelize-all -ftree-loop-linear -floop-interchange -floop-strip-mine -floop-block -pipe -Wno-unused-parameter -Wno-sign-compare -Wno-missing-field-initializers -Wno-unused-variable -Wno-unused-value -std=gnu11
+HOSTCXXFLAGS = -O3 -fgcse-las -DNDEBUG -fgraphite -floop-flatten -floop-parallelize-all -ftree-loop-linear -floop-interchange -floop-strip-mine -floop-block -pipe -std=gnu11
 
 # Decide whether to build built-in, modular, or both.
 # Normally, just do built-in.
@@ -349,17 +349,11 @@ endif
 
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
+GRAPHITE	= -fgraphite-identity -floop-parallelize-all -ftree-loop-linear -floop-interchange -floop-strip-mine -floop-block -floop-flatten
 CFLAGS_MODULE   = $(CFLAGS_KERNEL)
 AFLAGS_MODULE   =
-LDFLAGS_MODULE = $(LDFLAGS)
-CFLAGS_KERNEL = -marm -mfpu=neon-vfpv4 -funsafe-loop-optimizations -funsafe-math-optimizations \
-				-mvectorize-with-neon-quad \
-				-fgcse-sm -fgcse-las \
-				-ftree-loop-im -ftree-loop-ivcanon -fivopts \
-				-fweb -ftracer \
-				-fsched-spec-load -fforce-addr -fsingle-precision-constant \
-				-fsection-anchors -frename-registers \
-				-fmodulo-sched -fmodulo-sched-allow-regmoves
+LDFLAGS_MODULE  = $(LDFLAGS)
+CFLAGS_KERNEL   = -mfpu=neon-vfpv4
 AFLAGS_KERNEL	=
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
@@ -383,16 +377,21 @@ LINUXINCLUDE    := \
 
 KBUILD_CPPFLAGS := -D__KERNEL__
 
-KBUILD_CFLAGS := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
-				-fno-strict-aliasing -fno-common \
-				-Wno-format-security -Wno-unused \
-				-fno-delete-null-pointer-checks \
-				-Wno-maybe-uninitialized \
-				-Wno-sizeof-pointer-memaccess \
-				-Wno-error=unused-parameter -Wno-error=unused-but-set-variable \
-				-fno-exceptions -Wno-multichar -Wno-sequence-point \
-				-fno-delete-null-pointer-checks \
-				-std=gnu89
+KBUILD_CFLAGS   := $(GRAPHITE)  -Wundef -Wstrict-prototypes -Wno-trigraphs \
+		   -fno-strict-aliasing -fno-common \
+		   -Werror-implicit-function-declaration \
+		   -Wno-format-security -Wno-sizeof-pointer-memaccess \
+		   -fmodulo-sched -fmodulo-sched-allow-regmoves \
+           -funswitch-loops -fpredictive-commoning -fgcse-after-reload \
+ 		   -ftree-loop-vectorize -ftree-loop-distribute-patterns -ftree-slp-vectorize \
+            -fvect-cost-model -ftree-partial-pre \
+            -fgcse-lm -fgcse-sm -fsched-spec-load -fsingle-precision-constant
+		   -fno-delete-null-pointer-checks -std=gnu11 \
+		   -fgcse-after-reload -fgcse-sm -fgcse-las \
+		   -fweb -frename-registers \
+		   -ftree-loop-im -ftree-loop-linear \
+		   -ftree-loop-ivcanon -ftree-vectorize \
+		   -fno-delete-null-pointer-checks -std=gnu11 -DNDEBUG
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
 KBUILD_AFLAGS   := -D__ASSEMBLY__
